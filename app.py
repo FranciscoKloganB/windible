@@ -38,10 +38,10 @@ def process():
 @click.option(
     "-w",
     "--work-directory",
-    help="Relative path to directory where both sets of files are located, relative file_manager.py parent directory.",
+    help="Relative path to directory where both sets of files are located.",
 )
 def deleter(dry, slave_extension, master_extension, work_directory):
-    """Deletes slave files in specified directory which do not have a direct counterpart with master extension."""
+    """Deletes slave files in directory which do not have a counterpart in master set."""
 
     base_dir = Path(__file__).resolve(strict=True).parent
     work_dir = Path.resolve(base_dir / work_directory, strict=True)
