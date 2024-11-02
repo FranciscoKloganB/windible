@@ -4,6 +4,24 @@ import click
 from pathlib import Path
 from progressbar import Bar, Percentage, ProgressBar
 
+ACCEPTED_EXTENSIONS = {'JPEG', 'JPG', 'NEF'}
+
+def normalize_extension(ext: str) -> str:
+    """
+    Normalizes file extensions to lowercase with leading dot.
+    Handles various forms of .JPG and .NEF extensions.
+    It uppercases the provided extension string and strips any leading dot
+    """
+    if ext not in ACCEPTED_EXTENSIONS:
+        raise ValueError(f"Unsupported file extension: .{ext}")
+
+    ext = ext.upper().lstrip('.')
+
+    if ext in ('JPEG', 'JPG'):
+        return '.JPG'
+    elif ext in ('NEF'):
+        return '.NEF'
+
 
 @click.group(context_settings=dict(help_option_names=["-h", "--help"]))
 def process():
@@ -25,14 +43,14 @@ def process():
     "-se",
     "--slave-extension",
     default=".NEF",
-    help="Files of the specified extension are deleted if they do not have a matching file with 'master' extension.",
+    help="Files of the specified extension are deleted if they do not have a matching file with 'master' extension. Supported: .NEF, .JPG, .JPEG",
     type=str,
 )
 @click.option(
     "-me",
     "--master-extension",
     default=".JPG",
-    help="Used to define the reference set of files. Slave files will be reduced to a subset of Master files.",
+    help="Used to define the reference set of files. Slave files will be reduced to a subset of Master files. Supported: .NEF, .JPG, .JPEG",
     type=str,
 )
 @click.option(
@@ -42,6 +60,10 @@ def process():
 )
 def deleter(dry, slave_extension, master_extension, work_directory):
     """Deletes slave files in directory which do not have a counterpart in master set."""
+
+    # Normalize extensions
+    slave_extension = normalize_extension(slave_extension)
+    master_extension = normalize_extension(master_extension)
 
     base_dir = Path(__file__).resolve(strict=True).parent
     work_dir = Path.resolve(base_dir / work_directory, strict=True)
