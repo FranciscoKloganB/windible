@@ -12,8 +12,6 @@ def normalize_extension(ext: str) -> str:
     Handles various forms of .JPG and .NEF extensions.
     It uppercases the provided extension string and strips any leading dot
     """
-    if ext not in ACCEPTED_EXTENSIONS:
-        raise ValueError(f"Unsupported file extension: .{ext}")
 
     ext = ext.upper().lstrip('.')
 
@@ -21,6 +19,8 @@ def normalize_extension(ext: str) -> str:
         return '.JPG'
     elif ext in ('NEF'):
         return '.NEF'
+
+    raise ValueError(f"Unsupported file extension: .{ext}")
 
 
 @click.group(context_settings=dict(help_option_names=["-h", "--help"]))
